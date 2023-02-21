@@ -1,5 +1,8 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Assistant assistant = new Assistant(System.in);
+        assistant.askUsername();
+        assistant.greetingsUser();
+        assistant.printSynTable();
     }
 }
