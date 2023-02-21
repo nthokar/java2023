@@ -1,6 +1,6 @@
 # java 2023 Zhirnov Vladiimr
 
-## task -> branch []
+## task -> branch
 
 - [1.1 -> main](https://github.com/Nthokar/java2023)
 
