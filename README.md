@@ -6,6 +6,8 @@
 
 - [1.2 -> 1.2](https://github.com/Nthokar/java2023/tree/1.2)
 
+- [2.1 -> 2.1](https://github.com/Nthokar/java2023/tree/2.1)
+
 ### Task 1.2
 <div>
   <p>Пример работы программы 1.2<p>
