@@ -20,7 +20,7 @@ public class Assistant {
         System.out.println("x° -> syn(x°)");
         for (int i = 0; i <= 45; i+=5){
             System.out.println("+-------------+");
-            System.out.printf("|%-2s -> %7s|%n", i, df.format(Math.sin(i)));
+            System.out.printf("|%-2s -> %7s|%n", i, df.format(java.lang.Math.sin(i)));
         }
         System.out.println("+-------------+");
     }
