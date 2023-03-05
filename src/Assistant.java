@@ -3,9 +3,9 @@ import java.text.DecimalFormat;
 
 public class Assistant {
     private String username;
-    public final streamReader consoleReader;
+    public final StreamReader consoleReader;
     public Assistant(InputStream stream) {
-        this.consoleReader = new streamReader(stream);
+        this.consoleReader = new StreamReader(stream);
     }
 
     public void askUsername(){
