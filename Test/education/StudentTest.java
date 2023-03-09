@@ -23,17 +23,17 @@ class StudentTest {
         var tasks = new ArrayList<Task>(){{add(Task.generateRandomTask());}};
         for (var task:tasks){
             try {
-                st1.tasksToDo.add((Task) task.clone());
-                st2.tasksToDo.add((Task) task.clone());
+                st1.getTasksToDo().add(task.copy());
+                st2.getTasksToDo().add(task.copy());
             }
             catch (Exception e){
                 System.out.println(e.getMessage());
             }
         }
         st1.work();
-        double workAfterStudent1 = st1.tasksToDo.get(0).getDifficulty();
+        double workAfterStudent1 = st1.getTasksToDo().get(0).getDifficulty();
         st2.work();
-        double workAfterStudent2 = st1.tasksToDo.get(0).getDifficulty();
+        double workAfterStudent2 = st1.getTasksToDo().get(0).getDifficulty();
         assertEquals(workAfterStudent1, workAfterStudent2);
     }
 }

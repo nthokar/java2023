@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class Professor {
     ArrayList<Student> students = new ArrayList<>();
 
-    public void EvaluateRandom(){
+    public void evaluateRandom(){
         for (var student:students){
-            for (var task:student.tasksCompleted){
-                task.evaluate(Mark.randomEvaluate(task.getMaxMarkValue()));
+            for (var task:student.getTasksToDo()){
+                task.evaluate(Mark.randomMark(task.getMaxMarkValue()));
             }
         }
     }
-    public void Evaluate() {
-
+    public void evaluate() {
+        //Unimplemented
     }
 }
