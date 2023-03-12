@@ -3,14 +3,25 @@ package education;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class StudentTest {
-
     @Test
-    void dailyWorkAbility() {
+    void createRandomStudent(){
+        var student1 = Student.Builder.createRandomStudent();
+        var student2 = Student.Builder.createRandomStudent();
+
+        assertNotEquals(student1, student2);
+        assertEquals(student1.build().getClass().getName(), Student.class.getName());
+    }
+    @Test
+    void addTaskToDo(){
+        var taskToDo = Task.Builder.generateRandomTask().build();
+        var student = Student.Builder.createRandomStudent();
+
+        student.addTaskToDo(taskToDo).addTaskToDo(taskToDo);
+
+        assertEquals(2, student.build().getTasksToDo().size());
     }
 
     @Test
@@ -20,11 +31,11 @@ class StudentTest {
         var st1 = new Student("Vova", 0.0001);
         var st2 = new Student("Andrew", 0.0002);
 
-        var tasks = new ArrayList<Task>(){{add(Task.generateRandomTask());}};
+        var tasks = new ArrayList<Task>(){{add(Task.Builder.generateRandomTask().build());}};
         for (var task:tasks){
             try {
-                st1.getTasksToDo().add(task.copy());
-                st2.getTasksToDo().add(task.copy());
+                st1.addTasksToDo(task.copy());
+                st2.addTasksToDo(task.copy());
             }
             catch (Exception e){
                 System.out.println(e.getMessage());

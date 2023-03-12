@@ -8,16 +8,16 @@ public class Simulator {
     public static void main(String[] args) {
         var tasks = new ArrayList<Task>();
         for (int i = 0; i < 3; i++){
-            var task = Task.generateRandomTask();
+            var task = Task.Builder.generateRandomTask().build();
             tasks.add(task);
         }
         var students = new ArrayList<Student>();
         for (int i = 0; i < 3; i++){
-            var st = Student.createRandomStudent();
+            var randomStudent = Student.Builder.createRandomStudent();
             for (var task:tasks){
-                st.getTasksToDo().add(task.copy());
+                randomStudent.addTaskToDo(task.copy());
             }
-            students.add(st);
+            students.add(randomStudent.build());
         }
         var professor = new Professor();
         professor.students = students;
@@ -29,7 +29,7 @@ public class Simulator {
                     Thread.sleep(1000);
                     student.work();
                 }
-                professor.evaluateRandom();
+                professor.evaluateRandom(students);
             }
             catch (Exception e){
                 logger.warning("something went wrong" + e.getMessage());
