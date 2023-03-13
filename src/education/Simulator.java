@@ -32,8 +32,7 @@ public class Simulator {
                 professor.evaluateRandom(students);
             }
             catch (Exception e){
-                logger.warning("something went wrong" + e.getMessage());
-                Thread.currentThread().interrupt();
+                logger.warning("something went wrong%n" + e.getMessage());
             }
         }
     }

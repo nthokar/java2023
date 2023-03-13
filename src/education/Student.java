@@ -142,6 +142,9 @@ public class Student {
                 //если задание нам не по силам то делаем его часть и отдыхаем.
                 if ((curTask.getDifficulty() - todayWorkAbility) > 0 ){
                     curTask.setDifficulty(curTask.getDifficulty() - todayWorkAbility);
+                    logger.info(String.format("<%s>: working on task %s left%n",
+                            name,
+                            (int) (curTask.getDifficulty() * 100)));
                     todayWorkAbility = 0;
                 }
                 //если задание по силам то тогда сдаём его и переходим к следующему.

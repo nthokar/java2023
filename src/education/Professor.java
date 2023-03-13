@@ -13,8 +13,8 @@ public class Professor {
             }
         }
     }
-    public void evaluate() {
-        //Unimplemented
+    public void Evaluate() {
+
     }
     public void setNewTaskRandom(){
         var task = Task.Builder.generateRandomTask().build();

@@ -1,5 +1,7 @@
 package education;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -14,16 +16,12 @@ public class Mark {
         mark.evaluatedBy = "SYSTEM";
         return mark;
     }
+    @Getter
     private int value;
-    public int getValue() {
-        return value;
-    }
-
+    @Getter
     private boolean isValid;
-    public boolean isValid() {
-        return isValid;
-    }
-
+    @Getter
     private LocalDateTime evaluatedAt;
+    @Getter
     private String evaluatedBy;
 }

@@ -1,5 +1,7 @@
 package education;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
@@ -74,12 +76,18 @@ public class Task{
     public int getMaxMarkValue() {
         return maxMarkValue;
     }
+
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
+    }
+
     private Mark mark;
     public void evaluate(Mark mark){
         this.mark = mark;
-    }
-    public Mark getMark(){
-        return mark;
     }
     private LocalDateTime handedAt;
     public LocalDateTime getHandedAt() {
