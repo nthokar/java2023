@@ -28,8 +28,10 @@ public class Simulator {
                 for (var student:students) {
                     Thread.sleep(1000);
                     student.work();
+                    for(var task: student.getTasksCompleted()) {
+                        professor.evaluateRandom(task);
+                    }
                 }
-                professor.evaluateRandom(students);
             }
             catch (Exception e){
                 logger.warning("something went wrong%n" + e.getMessage());

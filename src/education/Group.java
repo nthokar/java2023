@@ -16,7 +16,6 @@ public class Group {
         for (var student:students){
             for (var task:student.getTasksCompleted()){
                 if (Objects.nonNull(task.getMark())) {
-                    professor.evaluateRandom(students);
                 }
             }
         }

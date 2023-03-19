@@ -1,6 +1,8 @@
 package education;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -58,53 +60,31 @@ public class Task{
         this.maxMarkValue = task.getMaxMarkValue();
         this.mark = task.mark;
     }
+    @Getter
+    @Setter
     private String title;
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    @Getter
+    @Setter
     private double difficulty;
-    public double getDifficulty() {
-        return difficulty;
-    }
-    public void setDifficulty(double difficulty) {
-        this.difficulty = difficulty;
-    }
+    @Getter
     private final int maxMarkValue;
-    public int getMaxMarkValue() {
-        return maxMarkValue;
-    }
-
-    public Mark getMark() {
-        return mark;
-    }
-
-    public void setMark(Mark mark) {
-        this.mark = mark;
-    }
-
+    @Getter
     private Mark mark;
-    public void evaluate(Mark mark){
-        this.mark = mark;
+    public void evaluate(Professor professor){
+        professor.evaluateRandom(this);
     }
+    @Getter
     private LocalDateTime handedAt;
-    public LocalDateTime getHandedAt() {
-        return handedAt;
-    }
 
     public void hand(){
         handedAt = LocalDateTime.now();
     }
+    @Getter
     private LocalDateTime gavenAt;
-    public LocalDateTime getGavenAt() {
-        return gavenAt;
-    }
-
     public void give() {
         gavenAt = LocalDateTime.now();
     }
+
     public Task copy(){
         return new Task(this);
     }

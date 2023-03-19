@@ -2,19 +2,14 @@ package education;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Professor {
     ArrayList<Student> students = new ArrayList<>();
-
-    public void evaluateRandom(List<Student> students){
-        for (var student:students){
-            for (var task:student.getTasksToDo()){
-                task.evaluate(Mark.randomMark(task.getMaxMarkValue()));
-            }
-        }
-    }
-    public void Evaluate() {
-
+    public Mark evaluateRandom(Task task){
+        if (Objects.nonNull(task.getMark()))
+            return Mark.randomMark(task.getMaxMarkValue());
+        return task.getMark();
     }
     public void setNewTaskRandom(){
         var task = Task.Builder.generateRandomTask().build();

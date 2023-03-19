@@ -1,5 +1,8 @@
 package education;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,23 +76,12 @@ public class Student {
             return new Student(this);
         }
     }
-
+    @Getter
+    @Setter
     private String name;
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    @Getter
+    @Setter
     private boolean male;
-    public boolean isMale() {
-        return male;
-    }
-    public void setMale(boolean male) {
-        this.male = male;
-    }
-
     private double motivation = 0.5;
     private void updateMotivation(){
         /*  Мотивация студента зависит от добросогестного отношения преподователя.
@@ -157,22 +149,16 @@ public class Student {
         }
     }
 
+    @Getter
+    @Setter
     private List<Task> tasksToDo = new ArrayList<>();
-    public List<Task> getTasksToDo() {
-        return tasksToDo;
-    }
     public List<Task> addTasksToDo(Task task) {
         task.give();
         tasksToDo.add(task);
         return tasksToDo;
     }
-    public void setTasksToDo(List<Task> tasksToDo) {
-        this.tasksToDo = tasksToDo;
-    }
+    @Getter
     private final List<Task> tasksCompleted = new ArrayList<>();
-    public List<Task> getTasksCompleted() {
-        return tasksCompleted;
-    }
     private void handTask(Task task){
         if (!tasksToDo.contains(task))
             return;
