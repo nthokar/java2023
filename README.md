@@ -15,7 +15,12 @@ history of moves
 
 # Опиисание бизнес-логики
 
+## Диаграмма взаимодействия
+
 ![image](https://github.com/Nthokar/java2023/blob/main/Untitled%20Workspace.png)
+
+
+## Диаграмма классов
 
 
 ![image](https://github.com/Nthokar/java2023/blob/main/classUML.png)
