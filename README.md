@@ -18,7 +18,7 @@ history of moves
 ![image](https://github.com/Nthokar/java2023/blob/main/Untitled%20Workspace.png)
 
 
-![image](https://github.com/Nthokar/java2023/blob/main/Untitled%20Workspace.png)
+![image](https://github.com/Nthokar/java2023/blob/main/classUML.png)
 
 
 Абстрактный класс Figure, является общим для всех фигур
