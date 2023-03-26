@@ -15,6 +15,12 @@ history of moves
 
 # Опиисание бизнес-логики
 
+![image](https://github.com/Nthokar/java2023/blob/main/Untitled%20Workspace.png)
+
+
+![image](https://github.com/Nthokar/java2023/blob/main/Untitled%20Workspace.png)
+
+
 Абстрактный класс Figure, является общим для всех фигур
 
 Классы-наследники: Bishop, King, Knight, Pawn, Queen, Rook. Объекты классоов, фигуры на доске, определяют направления
@@ -29,3 +35,5 @@ history of moves
 
 
 Класс Vector - не евклидовый вектор описывающий вкетор в приделах клеточных кординатах.
+
+
