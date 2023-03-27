@@ -44,10 +44,14 @@ public class Cell {
     }
     @Override
     public boolean equals(Object o) {
-        if (o instanceof MoveTemplate moveTemplate)
+        if (o instanceof MoveTemplate){
+            MoveTemplate moveTemplate = (MoveTemplate) o;
             return this.x == moveTemplate.x && this.y == moveTemplate.y;
-        if (o instanceof Cell cell)
+        }
+        if (o instanceof Cell){
+            Cell cell = (Cell) o;
             return this.x == cell.x && this.y == cell.y;
+        }
         return false;
     }
 }
