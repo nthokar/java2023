@@ -2,7 +2,7 @@ package Chess.Figures;
 
 import Chess.Desk.Cell;
 import Chess.Desk.MoveChecker;
-import Chess.Desk.Vector;
+import Chess.Desk.MoveTemplate;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
@@ -21,7 +21,7 @@ public class King extends Figure{
             new Cell(+1, +1), new Cell(+1, 0), new Cell(+1, -1),
             new Cell(-1, +1), new Cell(-1, 0), new Cell(-1, -1),
     };
-    private final Set<Vector> Cells = Set.of(
+    private final Set<MoveTemplate> Cells = Set.of(
             MoveChecker.Cells.get("upperLeftCell"),
             MoveChecker.Cells.get("upperRightCell"),
             MoveChecker.Cells.get("downLeftCell"),
@@ -31,7 +31,7 @@ public class King extends Figure{
             MoveChecker.Cells.get("upperCell"),
             MoveChecker.Cells.get("downCell")
     );
-    private final Set<Vector> Directions = Set.of();
+    private final Set<MoveTemplate> Directions = Set.of();
 
     @Override
     public Figure copy() {
@@ -40,20 +40,11 @@ public class King extends Figure{
         return king;
     }
 
-    public Set<Vector> getCells() {
+    public Set<MoveTemplate> getCells() {
         return Cells;
     }
-    public Set<Vector> getDirections() {
+    public Set<MoveTemplate> getDirections() {
         return Directions;
-    }
-
-    @Override
-    public Cell[] availableCells() throws ExecutionControl.NotImplementedException {
-        return new Cell[0];
-    }
-
-    @Override
-    public void move(Cell cellFrom, Cell cellTo) {
     }
 
     @Override
@@ -61,10 +52,5 @@ public class King extends Figure{
         if (cells.length == 0)
             return;
         cells[0].moveFigure(cells[1]);
-    }
-
-    @Override
-    public Cell[] pathTo(Cell cellFrom, Cell cellTo, Cell[][] board) {
-        return new Cell[0];
     }
 }

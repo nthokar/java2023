@@ -1,7 +1,7 @@
 package Chess.Desk;
 
-public class Vector{
-    public Vector(double x, double y){
+public class MoveTemplate {
+    public MoveTemplate(double x, double y){
         this.x = x;
         this.y = y;
     }
@@ -10,8 +10,8 @@ public class Vector{
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Vector)
-            return this.x == ((Vector) o).x && this.y == ((Vector) o).y;
+        if (o instanceof MoveTemplate)
+            return this.x == ((MoveTemplate) o).x && this.y == ((MoveTemplate) o).y;
         if (o instanceof Cell)
             return this.x == ((Cell) o).x && this.y == ((Cell) o).y;
         return false;
@@ -25,9 +25,9 @@ public class Vector{
     public boolean equals(Cell cell) {
         return this.x == (double) cell.x && this.y == (double) cell.y;
     }
-    public Vector getUnitVector(){
+    public MoveTemplate getUnitVector(){
         double maxAbs = Math.max(Math.abs(this.x), Math.abs(this.y));
-        return new Vector(this.x/ maxAbs, this.y/maxAbs);
+        return new MoveTemplate(this.x/ maxAbs, this.y/maxAbs);
     }
 
 }

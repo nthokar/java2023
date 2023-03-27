@@ -28,8 +28,8 @@ public class Cell {
         return c;
     }
     //вычисляет вектор до клетки
-    public Vector getVector(Cell cellTo){
-        return new Vector(cellTo.x - this.x, cellTo.y - this.y);
+    public MoveTemplate getVector(Cell cellTo){
+        return new MoveTemplate(cellTo.x - this.x, cellTo.y - this.y);
     }
     //переставляет фигуру в клетку
     public void moveFigure(Cell cellTo){
@@ -44,8 +44,8 @@ public class Cell {
     }
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Vector vector)
-            return this.x == vector.x && this.y == vector.y;
+        if (o instanceof MoveTemplate moveTemplate)
+            return this.x == moveTemplate.x && this.y == moveTemplate.y;
         if (o instanceof Cell cell)
             return this.x == cell.x && this.y == cell.y;
         return false;

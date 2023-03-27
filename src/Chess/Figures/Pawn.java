@@ -2,11 +2,10 @@ package Chess.Figures;
 
 import Chess.Desk.Cell;
 import Chess.Desk.MoveChecker;
-import Chess.Desk.Vector;
+import Chess.Desk.MoveTemplate;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -14,9 +13,9 @@ public class Pawn extends Figure {
     public Pawn(Color color) {
         super("pawn", color);
         if (color == Color.BLACK) {
-            legalCells = new Vector[]{ new Vector(0,-1)};
-            possibleCells = new Vector[]{ new Vector(0, -2)};
-            capture = new Vector[]{ new Vector(+1, -1), new Vector(-1, -1)};
+            legalCells = new MoveTemplate[]{ new MoveTemplate(0,-1)};
+            possibleCells = new MoveTemplate[]{ new MoveTemplate(0, -2)};
+            capture = new MoveTemplate[]{ new MoveTemplate(+1, -1), new MoveTemplate(-1, -1)};
             Cells = Set.of(
                     MoveChecker.Cells.get("downLeftCell"),
                     MoveChecker.Cells.get("downRightCell"),
@@ -26,9 +25,9 @@ public class Pawn extends Figure {
             );
         }
         else {
-            legalCells = new Vector[]{ new Vector(0,+1)};
-            possibleCells = new Vector[]{new Vector(0, +2)};
-            capture = new Vector[]{ new Vector(-1, +1), new Vector(+1, +1)};
+            legalCells = new MoveTemplate[]{ new MoveTemplate(0,+1)};
+            possibleCells = new MoveTemplate[]{new MoveTemplate(0, +2)};
+            capture = new MoveTemplate[]{ new MoveTemplate(-1, +1), new MoveTemplate(+1, +1)};
             Cells = Set.of(
                     MoveChecker.Cells.get("upperLeftCell"),
                     MoveChecker.Cells.get("upperRightCell"),
@@ -38,8 +37,8 @@ public class Pawn extends Figure {
             );
         }
     }
-    private final Set<Vector> Cells;
-    private final Set<Vector> Directions;
+    private final Set<MoveTemplate> Cells;
+    private final Set<MoveTemplate> Directions;
 
     @Override
     public Figure copy() {
@@ -48,44 +47,19 @@ public class Pawn extends Figure {
         return c;
     }
 
-    public Set<Vector> getCells() {
+    public Set<MoveTemplate> getCells() {
         return Cells;
     }
-    public Set<Vector> getDirections() {
+    public Set<MoveTemplate> getDirections() {
         return Directions;
     }
     private boolean isMoved = false;
     public boolean isMoved() {
         return isMoved;
     }
-    public final Vector[] legalCells;
-    public final Vector[] possibleCells;
-    public final Vector[] capture;
-
-    @Override
-    public Cell[] availableCells() throws ExecutionControl.NotImplementedException {
-        return new Cell[0];
-    }
-
-    @Override
-    public void move(Cell cellFrom, Cell cellTo) {
-        var vector = cellFrom.getVector(cellTo);
-        if (Arrays.stream(legalCells).anyMatch(c -> c.equals(vector)) && cellTo.getFigure() == null){
-            cellFrom.moveFigure(cellTo);
-            isMoved = true;
-        }
-        else if (Arrays.stream(capture).anyMatch(c -> c.equals(vector)) && cellTo.getFigure().color != color){
-            cellFrom.moveFigure(cellTo);
-            isMoved = true;
-        }
-        else {
-                if (Arrays.stream(possibleCells).anyMatch(c -> c.equals(vector)) && !isMoved && cellTo.getFigure() == null){
-                cellFrom.moveFigure(cellTo);
-                isMoved = true;
-            }
-        }
-    }
-
+    public final MoveTemplate[] legalCells;
+    public final MoveTemplate[] possibleCells;
+    public final MoveTemplate[] capture;
     @Override
     public void move(Cell[] cells) {
         if (cells.length == 0)
@@ -107,10 +81,5 @@ public class Pawn extends Figure {
         }
         cells[0].moveFigure(cells[cells.length - 1]);
         isMoved = true;
-    }
-
-    @Override
-    public Cell[] pathTo(Cell cellFrom, Cell cellTo, Cell[][] board) {
-        return new Cell[0];
     }
 }

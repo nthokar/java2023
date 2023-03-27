@@ -2,7 +2,7 @@ package Chess.Figures;
 
 import Chess.Desk.Cell;
 import Chess.Desk.MoveChecker;
-import Chess.Desk.Vector;
+import Chess.Desk.MoveTemplate;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
@@ -14,13 +14,13 @@ public class Knight extends Figure{
         super("knight", color);
 
     }
-    public final Vector[] legalCells = new Vector[] {
-        new Vector(+2, +1), new Vector(+2, -1),
-        new Vector(-2, +1), new Vector(-2, -1),
-        new Vector(+1, +2), new Vector(+1, -2),
-        new Vector(-1, +2), new Vector(-1, -2) };
+    public final MoveTemplate[] legalCells = new MoveTemplate[] {
+        new MoveTemplate(+2, +1), new MoveTemplate(+2, -1),
+        new MoveTemplate(-2, +1), new MoveTemplate(-2, -1),
+        new MoveTemplate(+1, +2), new MoveTemplate(+1, -2),
+        new MoveTemplate(-1, +2), new MoveTemplate(-1, -2) };
 
-    private final Set<Vector> Cells = Set.of(
+    private final Set<MoveTemplate> Cells = Set.of(
             MoveChecker.Cells.get("knightUpLeft"),
             MoveChecker.Cells.get("knightUpRight"),
             MoveChecker.Cells.get("knightDownLeft"),
@@ -30,33 +30,18 @@ public class Knight extends Figure{
             MoveChecker.Cells.get("knightLeftDown"),
             MoveChecker.Cells.get("knightRightDown")
     );
-    private final Set<Vector> Directions = Set.of();
+    private final Set<MoveTemplate> Directions = Set.of();
 
     @Override
     public Figure copy() {
         return new Knight(this.color);
     }
 
-    public Set<Vector> getCells() {
+    public Set<MoveTemplate> getCells() {
         return Cells;
     }
-    public Set<Vector> getDirections() {
+    public Set<MoveTemplate> getDirections() {
         return Directions;
-    }
-
-    @Override
-    public Cell[] availableCells() throws ExecutionControl.NotImplementedException {
-        return new Cell[0];
-    }
-
-    @Override
-    public void move(Cell cellFrom, Cell cellTo) {
-        Vector vector = cellFrom.getVector(cellTo);
-
-        if (Arrays.stream(legalCells).anyMatch(c -> c.equals(vector)) &&
-                (cellTo.getFigure() == null || cellTo.getFigure().color != color)){
-            cellFrom.moveFigure(cellTo);
-        }
     }
 
     @Override
@@ -65,19 +50,6 @@ public class Knight extends Figure{
             return;
         cells[0].moveFigure(cells[1]);
     }
-
-    @Override
-    public Cell[] pathTo(Cell cellFrom, Cell cellTo, Cell[][] board) {
-        cellFrom = board[cellFrom.x - 1][cellFrom.y - 1];
-        cellTo = board[cellTo.x - 1][cellTo.y - 1];
-        Vector vector = cellFrom.getVector(cellTo);
-        if (Arrays.stream(legalCells).anyMatch(c -> c.equals(vector)) &&
-                (cellTo.getFigure() == null || cellTo.getFigure().color != color)) {
-            return new Cell[]{cellFrom, cellTo};
-        }
-        return new Cell[0];
-    }
-
     @Override
     public String toString() {
         return color == Color.BLACK ?

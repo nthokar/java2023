@@ -12,14 +12,14 @@ public class MoveChecker {
     }
     public final Desk desk;
     public final Cell[][] board;
-    public Cell[] CellsInDirection(Cell cell, Vector vector){
-        int x = Math.round((float) (cell.x + vector.x)) - 1;
-        int y = Math.round((float) (cell.y +  vector.y)) - 1;
+    public Cell[] CellsInDirection(Cell cell, MoveTemplate moveTemplate){
+        int x = Math.round((float) (cell.x + moveTemplate.x)) - 1;
+        int y = Math.round((float) (cell.y +  moveTemplate.y)) - 1;
         if (x < desk.xLength() && 0 <= x && y < desk.yLength() && 0 <= y){
             Cell newCell = board[x][y];
             if (newCell.getFigure() == null){
                 var raisedArray = new ArrayList<Cell>(){{add(newCell);}};
-                raisedArray.addAll(List.of(CellsInDirection(newCell, vector)));
+                raisedArray.addAll(List.of(CellsInDirection(newCell, moveTemplate)));
                 return raisedArray.toArray(new Cell[raisedArray.size()]);
             }
             else
@@ -32,7 +32,7 @@ public class MoveChecker {
         cellTo = board[cellTo.x - 1][cellTo.y -1];
         var vector = cellFrom.getVector(cellTo);
         double maxAbs = Math.max(Math.abs(vector.x), Math.abs(vector.y));
-        Vector unitVector =  new Vector(vector.x/ maxAbs, vector.y/maxAbs);
+        MoveTemplate unitMoveTemplate =  new MoveTemplate(vector.x/ maxAbs, vector.y/maxAbs);
 
         var cells = cellFrom.getFigure().getCells();
         if (cells != null && cells.contains(vector)
@@ -41,12 +41,12 @@ public class MoveChecker {
         }
 
         var directions = cellFrom.getFigure().getDirections();
-        if (directions != null && directions.contains(unitVector)) {
+        if (directions != null && directions.contains(unitMoveTemplate)) {
             Cell currentCell = cellFrom;
             ArrayList<Cell> path = new ArrayList<>();
             path.add(currentCell);
             while (currentCell != cellTo){
-                currentCell = board[currentCell.x + (int) unitVector.x - 1][currentCell.y + (int) unitVector.y - 1];
+                currentCell = board[currentCell.x + (int) unitMoveTemplate.x - 1][currentCell.y + (int) unitMoveTemplate.y - 1];
                 path.add(currentCell);
             }
             return path.toArray(Cell[]::new);
@@ -90,33 +90,33 @@ public class MoveChecker {
         }
         return false;
     }
-    public static final HashMap<String, Vector> Directions = new HashMap<String, Vector>(){{
-        put("upperLeftDiagonal", new Vector(-1,+1));
-        put("upperRightDiagonal", new Vector(+1,+1));
-        put("downLeftDiagonal", new Vector(-1,-1));
-        put("downRightDiagonal", new Vector(+1,-1));
-        put("rightHorizontal", new Vector(+1,0));
-        put("leftHorizontal", new Vector(-1,0));
-        put("upperVertical", new Vector(0,+1));
-        put("downVertical", new Vector(0,-1));
+    public static final HashMap<String, MoveTemplate> Directions = new HashMap<String, MoveTemplate>(){{
+        put("upperLeftDiagonal", new MoveTemplate(-1,+1));
+        put("upperRightDiagonal", new MoveTemplate(+1,+1));
+        put("downLeftDiagonal", new MoveTemplate(-1,-1));
+        put("downRightDiagonal", new MoveTemplate(+1,-1));
+        put("rightHorizontal", new MoveTemplate(+1,0));
+        put("leftHorizontal", new MoveTemplate(-1,0));
+        put("upperVertical", new MoveTemplate(0,+1));
+        put("downVertical", new MoveTemplate(0,-1));
     }};
-    public static final HashMap<String, Vector> Cells = new HashMap<String, Vector>(){{
-        put("upperLeftCell", new Vector(-1,+1));
-        put("upperRightCell", new Vector(+1,+1));
-        put("downLeftCell", new Vector(-1,-1));
-        put("downRightCell", new Vector(+1,-1));
-        put("rightCell", new Vector(+1,0));
-        put("leftCell", new Vector(-1,0));
-        put("upperCell", new Vector(0,+1));
-        put("downCell", new Vector(0,-1));
+    public static final HashMap<String, MoveTemplate> Cells = new HashMap<String, MoveTemplate>(){{
+        put("upperLeftCell", new MoveTemplate(-1,+1));
+        put("upperRightCell", new MoveTemplate(+1,+1));
+        put("downLeftCell", new MoveTemplate(-1,-1));
+        put("downRightCell", new MoveTemplate(+1,-1));
+        put("rightCell", new MoveTemplate(+1,0));
+        put("leftCell", new MoveTemplate(-1,0));
+        put("upperCell", new MoveTemplate(0,+1));
+        put("downCell", new MoveTemplate(0,-1));
 
-        put("knightUpLeft", new Vector(-1,+2));
-        put("knightUpRight", new Vector(+1,+2));
-        put("knightDownLeft", new Vector(-1,-2));
-        put("knightDownRight", new Vector(+1,-2));
-        put("knightLeftUp", new Vector(-2,+1));
-        put("knightRightUp", new Vector(+2,+1));
-        put("knightLeftDown", new Vector(-2,-1));
-        put("knightRightDown", new Vector(+2,-1));
+        put("knightUpLeft", new MoveTemplate(-1,+2));
+        put("knightUpRight", new MoveTemplate(+1,+2));
+        put("knightDownLeft", new MoveTemplate(-1,-2));
+        put("knightDownRight", new MoveTemplate(+1,-2));
+        put("knightLeftUp", new MoveTemplate(-2,+1));
+        put("knightRightUp", new MoveTemplate(+2,+1));
+        put("knightLeftDown", new MoveTemplate(-2,-1));
+        put("knightRightDown", new MoveTemplate(+2,-1));
     }};
 }

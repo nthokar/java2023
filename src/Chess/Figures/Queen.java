@@ -2,7 +2,7 @@ package Chess.Figures;
 
 import Chess.Desk.Cell;
 import Chess.Desk.MoveChecker;
-import Chess.Desk.Vector;
+import Chess.Desk.MoveTemplate;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.awt.*;
@@ -14,14 +14,14 @@ public class Queen extends Figure{
     public Queen(Color color) {
         super("queen", color);
     }
-    public Vector[] legalDirections = new Vector[]{
-            new Vector(0, +1), new Vector(0, -1),
-            new Vector(+1, 0), new Vector(-1, 0),
-            new Vector(+1, -1), new Vector(-1, +1),
-            new Vector(+1, +1), new Vector(-1, -1),
+    public MoveTemplate[] legalDirections = new MoveTemplate[]{
+            new MoveTemplate(0, +1), new MoveTemplate(0, -1),
+            new MoveTemplate(+1, 0), new MoveTemplate(-1, 0),
+            new MoveTemplate(+1, -1), new MoveTemplate(-1, +1),
+            new MoveTemplate(+1, +1), new MoveTemplate(-1, -1),
     };
-    private final Set<Vector> Cells = Set.of();
-    private final Set<Vector> Directions = Set.of(
+    private final Set<MoveTemplate> Cells = Set.of();
+    private final Set<MoveTemplate> Directions = Set.of(
             MoveChecker.Directions.get("upperLeftDiagonal"),
             MoveChecker.Directions.get("upperRightDiagonal"),
             MoveChecker.Directions.get("downLeftDiagonal"),
@@ -30,29 +30,17 @@ public class Queen extends Figure{
             MoveChecker.Directions.get("leftHorizontal"),
             MoveChecker.Directions.get("upperVertical"),
             MoveChecker.Directions.get("downVertical"));
-
     @Override
     public Figure copy() {
         return new Queen(this.color);
     }
 
-    public Set<Vector> getCells() {
+    public Set<MoveTemplate> getCells() {
         return Cells;
     }
-    public Set<Vector> getDirections() {
+    public Set<MoveTemplate> getDirections() {
         return Directions;
     }
-
-    @Override
-    public Cell[] availableCells() throws ExecutionControl.NotImplementedException {
-        return new Cell[0];
-    }
-
-    @Override
-    public void move(Cell cellFrom, Cell cellTo) {
-
-    }
-
     @Override
     public void move(Cell[] cells) {
         if (cells.length == 0)
@@ -66,23 +54,5 @@ public class Queen extends Figure{
             return;
         }
         cells[0].moveFigure(cells[cells.length - 1]);
-    }
-
-    @Override
-    public Cell[] pathTo(Cell cellFrom, Cell cellTo, Cell[][] board){
-        Vector vector = cellFrom.getVector(cellTo);
-        double maxAbs = Math.max(Math.abs(vector.x), Math.abs(vector.y));
-        Vector unitVector =  new Vector(vector.x/ maxAbs, vector.y/maxAbs);
-        if (Arrays.stream(legalDirections).anyMatch(v -> v.equals(unitVector))){
-            Cell currentCell = cellFrom;
-            ArrayList<Cell> path = new ArrayList<>();
-            path.add(currentCell);
-            while (currentCell != cellTo){
-                currentCell = board[currentCell.x + (int) unitVector.x - 1][currentCell.y + (int) unitVector.y - 1];
-                path.add(currentCell);
-            }
-            return path.toArray(Cell[]::new);
-        }
-        return new Cell[0];
     }
 }
