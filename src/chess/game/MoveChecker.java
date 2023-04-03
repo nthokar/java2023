@@ -1,9 +1,14 @@
-package Chess.Desk;
+package chess.game;
+
+import chess.desk.Cell;
+import chess.desk.Desk;
+import chess.desk.Move;
+import chess.desk.MoveTemplate;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MoveChecker {
     public MoveChecker(Desk desk){
@@ -16,7 +21,7 @@ public class MoveChecker {
         int x = Math.round((float) (cell.x + moveTemplate.x)) - 1;
         int y = Math.round((float) (cell.y +  moveTemplate.y)) - 1;
         if (x < desk.xLength() && 0 <= x && y < desk.yLength() && 0 <= y){
-            Cell newCell = board[x][y];
+            Cell newCell = desk.cells[x][y];
             if (newCell.getFigure() == null){
                 var raisedArray = new ArrayList<Cell>(){{add(newCell);}};
                 raisedArray.addAll(List.of(CellsInDirection(newCell, moveTemplate)));
@@ -53,28 +58,36 @@ public class MoveChecker {
         }
         return new Cell[0];
     }
+    public Set<Move> possibleMoves(Cell cellFrom){
+        HashSet<Move> moves = new HashSet<>();
+        var figure = cellFrom.getFigure();
+        if (Objects.isNull(figure)) {
+            return moves;
+        }
+        for(var direction: figure.getDirections()){
+            var cellsInDirection = CellsInDirection(cellFrom, direction);
+            moves.addAll(Arrays.stream(cellsInDirection)
+                    .map(x -> new Move(cellFrom, x, figure.color))
+                    .collect(Collectors.toList()));
+        }
+        for (var cell:figure.getCells()) {
+            try {
+                moves.add(new Move(
+                        cellFrom, desk.cells
+                        [cellFrom.x + (int)cell.x - 1]
+                        [cellFrom.y + (int)cell.y - 1], figure.color));
+            }
+            catch (Exception e){
 
-//    public Cell[] attacksFrom(Cell cell){
-//        var result = new ArrayList<Cell>();
-//        for (String key: Directions.keySet()){
-//            var direction = Directions.get(key);
-//            var cellsTo = CellsInDirection(cell, direction);
-//            if (cellsTo.length > 0){
-//                var figure = cellsTo[cellsTo.length - 1].getFigure();
-//                if (figure != null && figure.color != cell.getFigure().color
-//                        && figure.getDirections().contains(direction)) {
-//                    result.add(cellsTo[cellsTo.length - 1]);
-//                }
-//            }
-//        }
-//        return result.toArray(new Cell[0]);
-//    }
-
+            }
+        }
+        return moves;
+    }
     public boolean isUnderAttack(Cell cell){
         Cell[] enemies;
         if (cell.getFigure() == null){
             var whites = desk.getWhites();
-            var blacks = desk.getBlacks();
+            var blacks = desk.getBlacks(); // !
             enemies = new Cell[blacks.length + whites.length];
             System.arraycopy(whites, 0, enemies, 0, whites.length);
             System.arraycopy(blacks, whites.length, enemies, whites.length, whites.length + blacks.length - whites.length);
@@ -84,9 +97,12 @@ public class MoveChecker {
         cell = _desk.cells[cell.x - 1][cell.y - 1];
         for (var enemy:enemies){
             enemy = _desk.cells[enemy.x - 1][enemy.y - 1];
-            enemy.getFigure().move(_desk.moveChecker.pathTo(enemy, cell));
-            if (enemy.getFigure() == null)
-                return true;
+            try {
+                enemy.getFigure().move(_desk.moveChecker.pathTo(enemy, cell));
+                if (enemy.getFigure() == null)
+                    return true;
+            }
+            catch (Exception e){ }
         }
         return false;
     }
@@ -108,7 +124,9 @@ public class MoveChecker {
         put("rightCell", new MoveTemplate(+1,0));
         put("leftCell", new MoveTemplate(-1,0));
         put("upperCell", new MoveTemplate(0,+1));
+        put("upperUpperCell", new MoveTemplate(0,+2));
         put("downCell", new MoveTemplate(0,-1));
+        put("downDownCell", new MoveTemplate(0,-2));
 
         put("knightUpLeft", new MoveTemplate(-1,+2));
         put("knightUpRight", new MoveTemplate(+1,+2));
@@ -118,5 +136,8 @@ public class MoveChecker {
         put("knightRightUp", new MoveTemplate(+2,+1));
         put("knightLeftDown", new MoveTemplate(-2,-1));
         put("knightRightDown", new MoveTemplate(+2,-1));
+
+        put("longCastle", new MoveTemplate(-1, 0));
+        put("shortCastle", new MoveTemplate(+1, 0));
     }};
 }

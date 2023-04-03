@@ -1,13 +1,10 @@
-package Chess.Figures;
+package chess.figures;
 
-import Chess.Desk.Cell;
-import Chess.Desk.MoveChecker;
-import Chess.Desk.MoveTemplate;
-import jdk.jshell.spi.ExecutionControl;
+import chess.desk.Cell;
+import chess.game.MoveChecker;
+import chess.desk.MoveTemplate;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 public class Bishop extends Figure{
@@ -37,14 +34,14 @@ public class Bishop extends Figure{
     @Override
     public void move(Cell[] cells) {
         if (cells.length == 0)
-            return;
+            throw new IllegalArgumentException("IllegalMove");
         for (var i = 1; i < cells.length - 1; i++){
             var cell = cells[i];
             if (cell.getFigure() != null)
-                return;
+                throw new IllegalArgumentException("IllegalMove");
         }
         if (cells[cells.length - 1].getFigure() != null && cells[cells.length - 1].getFigure().color == color){
-            return;
+            throw new IllegalArgumentException("IllegalMove");
         }
         cells[0].moveFigure(cells[cells.length - 1]);
     }

@@ -1,12 +1,10 @@
-package Chess.Figures;
+package chess.figures;
 
-import Chess.Desk.Cell;
-import Chess.Desk.MoveChecker;
-import Chess.Desk.MoveTemplate;
-import jdk.jshell.spi.ExecutionControl;
+import chess.desk.Cell;
+import chess.game.MoveChecker;
+import chess.desk.MoveTemplate;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.Set;
 
 public class Knight extends Figure{
@@ -47,7 +45,7 @@ public class Knight extends Figure{
     @Override
     public void move(Cell[] cells) {
         if (cells.length == 0)
-            return;
+            throw new IllegalArgumentException("IllegalMove");
         cells[0].moveFigure(cells[1]);
     }
     @Override

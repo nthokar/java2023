@@ -1,8 +1,6 @@
-package Chess.Desk;
+package chess.desk;
 
-import Chess.Figures.Figure;
-import lombok.Getter;
-import lombok.Setter;
+import chess.figures.Figure;
 
 
 /*
@@ -10,8 +8,13 @@ import lombok.Setter;
 
  */
 public class Cell {
-    @Setter
-    @Getter
+    public Figure getFigure() {
+        return figure;
+    }
+
+    public void setFigure(Figure figure) {
+        this.figure = figure;
+    }
     private Figure figure;
 
     public final int x;

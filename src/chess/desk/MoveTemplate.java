@@ -1,4 +1,4 @@
-package Chess.Desk;
+package chess.desk;
 
 public class MoveTemplate {
     public MoveTemplate(double x, double y){

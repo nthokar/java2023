@@ -1,9 +1,8 @@
-package Chess.Figures;
+package chess.figures;
 
-import Chess.Desk.Cell;
-import Chess.Desk.MoveChecker;
-import Chess.Desk.MoveTemplate;
-import jdk.jshell.spi.ExecutionControl;
+import chess.desk.Cell;
+import chess.desk.MoveTemplate;
+import chess.game.MoveChecker;
 
 import java.awt.*;
 import java.util.Set;
@@ -31,7 +30,10 @@ public class King extends Figure{
             MoveChecker.Cells.get("upperCell"),
             MoveChecker.Cells.get("downCell")
     );
-    private final Set<MoveTemplate> Directions = Set.of();
+    private final Set<MoveTemplate> Directions = Set.of(
+            MoveChecker.Cells.get("longCastle"),
+            MoveChecker.Cells.get("shortCastle")
+    );
 
     @Override
     public Figure copy() {
@@ -39,18 +41,38 @@ public class King extends Figure{
         king.isMoved = this.isMoved;
         return king;
     }
-
     public Set<MoveTemplate> getCells() {
         return Cells;
     }
     public Set<MoveTemplate> getDirections() {
         return Directions;
     }
-
     @Override
     public void move(Cell[] cells) {
-        if (cells.length == 0)
-            return;
-        cells[0].moveFigure(cells[1]);
+        if (cells.length == 0) {
+            throw new IllegalArgumentException("IllegalMove");
+        }
+        if (cells.length >= 3){
+            //рокировка
+            if (isMoved){
+                throw new IllegalArgumentException("IllegalMove");
+            }
+            var rookCell = cells[cells.length - 1];
+
+            if (rookCell.getFigure() instanceof Rook &&
+                    !(((Rook) rookCell.getFigure()).isMoved())){
+                rookCell.moveFigure(cells[1]);
+                cells[0].moveFigure(cells[2]);
+                return;
+            }
+            throw new IllegalArgumentException("IllegalMove");
+        }
+        else{
+            if (cells[1].getFigure().color == color) {
+                throw new IllegalArgumentException("IllegalMove");
+            }
+            cells[0].moveFigure(cells[1]);
+            isMoved = false;
+        }
     }
 }
