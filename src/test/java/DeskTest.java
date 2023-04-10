@@ -102,4 +102,15 @@ class DeskTest {
     @Test
     void castle() {
     }
+
+    @Test
+    void underAttack(){
+        var desk = new Desk.Builder()
+                .setFigure(new King(Color.WHITE), new Cell(1, 1))
+                .setFigure(new Queen(Color.WHITE), new Cell(8, 1))
+                .setFigure(new King(Color.BLACK), new Cell(8, 8))
+                .build();
+        desk.print();
+        assertTrue(desk.moveChecker.isUnderAttack(new Cell(8, 8)));
+    }
 }

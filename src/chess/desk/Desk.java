@@ -1,12 +1,12 @@
 package chess.desk;
 
 import chess.figures.*;
-import chess.game.MoveChecker;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Stack;
 
 /*
 класс для хранения данных осостоянии дооски и их преобразования.
@@ -82,6 +82,7 @@ public class Desk {
     //длина доски
     public final Cell[][] cells;
     public final MoveChecker moveChecker;
+    public Stack<Move> history = new Stack<>();
     public Cell getKingCell(Color color){
         if (color == Color.WHITE){
             var whites = getWhites();
@@ -138,44 +139,55 @@ public class Desk {
         this.cells = cells;
         this.moveChecker = new MoveChecker(this);
     }
-    public Desk copy(){
-        Cell[][] _cells = new Cell[xLength()][yLength()];
-        for (var i = 0; i < xLength(); i++){
-            for (var j = 0; j < yLength(); j++){
-                _cells[i][j] = cells[i][j].copy();
-            }
-        }
-        return new Desk(_cells);
-    }
+    //метод возвращает ответ на вопрос возможен ли ход, и если да, то совершает его
     public boolean tryMove(Move move){
         try {
             move = projectMove(move);
             if (move.from.getFigure() == null){
-                System.out.println("choose possible move!");
                 return false;
             }
-            var deskValidation = this.copy();
-            var moveValidation = deskValidation.projectMove(move);
-            deskValidation.moveForce(move);
-            if (deskValidation.moveChecker.isUnderAttack(deskValidation.getKingCell(move.whichMove))){
+
+//            var deskValidation = this.copy();
+//            deskValidation.moveFigure(move);
+//
+//            if (deskValidation.moveChecker.isUnderAttack(deskValidation.getKingCell(move.whichMove))){
+//                return false;
+//            }
+
+            moveFigure(move);
+            if (isKingUnderAttack(move.whichMove))
+            {
+                undoMove();
                 return false;
             }
-            var path = this.moveChecker.pathTo(move.from, move.to);
-            move.from.getFigure().move(path);
             return true;
         }
         catch (Exception e){
             return false;
         }
     }
-    private void moveForce(Move move){
+    private void moveFigureForce(Move move){
+        move = projectMove(move);
+        move.from.moveFigure(move.to);
+        history.push(move);
+    }
+    private void moveFigure(Move move){
         move = projectMove(move);
         if (move.from.getFigure() == null){
-            System.out.println("choose possible move!");
             throw new RuntimeException();
         }
         var path = moveChecker.pathTo(move.from, move.to);
         move.from.getFigure().move(path);
+        history.push(move);
+    }
+    public void undoMove(){
+        var move = history.pop();
+        moveFigure(move.reverse());
+    }
+    public void loadByHistory(ArrayList<Move> moves){
+        for (var move:moves) {
+            tryMove(move);
+        }
     }
     public Move projectMove(Move move){
         var cellFrom = this.cells[move.from.x - 1][move.from .y - 1];
@@ -197,6 +209,15 @@ public class Desk {
                 .map(x -> x.getFigure().material)
                 .reduce(0, Integer::sum);
         return whitesMaterial - blacksMaterial;
+    }
+    public Desk copy(){
+        Cell[][] _cells = new Cell[xLength()][yLength()];
+        for (var i = 0; i < xLength(); i++){
+            for (var j = 0; j < yLength(); j++){
+                _cells[i][j] = cells[i][j].copy();
+            }
+        }
+        return new Desk(_cells);
     }
     public void print(){
         for (int i = 7; i >= 0; i--){

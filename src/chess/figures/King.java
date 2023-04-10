@@ -2,7 +2,7 @@ package chess.figures;
 
 import chess.desk.Cell;
 import chess.desk.MoveTemplate;
-import chess.game.MoveChecker;
+import chess.desk.MoveChecker;
 
 import java.awt.*;
 import java.util.Set;
@@ -74,5 +74,31 @@ public class King extends Figure{
             cells[0].moveFigure(cells[1]);
             isMoved = false;
         }
+    }
+
+    @Override
+    public boolean canMove(Cell[] cells) {
+        if (cells.length == 0) {
+            return false;
+        }
+        if (cells.length >= 3){
+            //рокировка
+            if (isMoved){
+                return false;
+            }
+            var rookCell = cells[cells.length - 1];
+
+            if (rookCell.getFigure() instanceof Rook &&
+                    !(((Rook) rookCell.getFigure()).isMoved())){
+                return true;
+            }
+        }
+        else{
+            if (cells[1].getFigure().color == color) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

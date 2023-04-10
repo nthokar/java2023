@@ -1,7 +1,7 @@
 package chess.figures;
 
 import chess.desk.Cell;
-import chess.game.MoveChecker;
+import chess.desk.MoveChecker;
 import chess.desk.MoveTemplate;
 
 import java.awt.*;
@@ -48,6 +48,14 @@ public class Knight extends Figure{
             throw new IllegalArgumentException("IllegalMove");
         cells[0].moveFigure(cells[1]);
     }
+
+    @Override
+    public boolean canMove(Cell[] cells) {
+        if (cells.length == 0)
+            return false;
+        return true;
+    }
+
     @Override
     public String toString() {
         return color == Color.BLACK ?

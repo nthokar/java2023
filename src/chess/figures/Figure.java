@@ -7,28 +7,28 @@ import java.awt.*;
 import java.util.Set;
 
 public abstract class Figure {
+    protected boolean isMoved = false;
+    public final String name;
+    public final Color color;
+    public final int material;
     public Figure(String name, Color color){
         this.name = name;
         this.color = color;
         this.material = getMaterial();
     }
-    public final String name;
-    public final Color color;
-    public final int material;
-    public Set<String> Directions;
-    public abstract Figure copy();
     public abstract Set<MoveTemplate> getCells();
     public abstract Set<MoveTemplate> getDirections();
-    private boolean isMoved = false;
     public boolean isMoved() {
         return isMoved;
     }
     public abstract void move(Cell[] cells);
+    public abstract boolean canMove(Cell[] cells);
     @Override
     public String toString() {
         return color == Color.BLACK ?
                 String.valueOf(name.charAt(0)).toUpperCase() : String.valueOf(name.charAt(0)).toLowerCase();
     }
+    public abstract Figure copy();
     private int getMaterial(){
         switch (name){
             case "pawn":

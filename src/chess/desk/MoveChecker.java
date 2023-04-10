@@ -1,13 +1,8 @@
-package chess.game;
-
-import chess.desk.Cell;
-import chess.desk.Desk;
-import chess.desk.Move;
-import chess.desk.MoveTemplate;
+package chess.desk;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MoveChecker {
@@ -85,6 +80,7 @@ public class MoveChecker {
     }
     public boolean isUnderAttack(Cell cell){
         Cell[] enemies;
+        cell = desk.cells[cell.x - 1][cell.y - 1];
         if (cell.getFigure() == null){
             var whites = desk.getWhites();
             var blacks = desk.getBlacks(); // !
@@ -93,16 +89,14 @@ public class MoveChecker {
             System.arraycopy(blacks, whites.length, enemies, whites.length, whites.length + blacks.length - whites.length);
         }
         enemies = cell.getFigure().color == Color.WHITE ? desk.getBlacks() : desk.getWhites();
-        var _desk = desk.copy();
-        cell = _desk.cells[cell.x - 1][cell.y - 1];
+
+
+
+        cell = desk.cells[cell.x - 1][cell.y - 1];
         for (var enemy:enemies){
-            enemy = _desk.cells[enemy.x - 1][enemy.y - 1];
-            try {
-                enemy.getFigure().move(_desk.moveChecker.pathTo(enemy, cell));
-                if (enemy.getFigure() == null)
-                    return true;
-            }
-            catch (Exception e){ }
+            enemy = desk.cells[enemy.x - 1][enemy.y - 1];
+            if (enemy.getFigure().canMove(desk.moveChecker.pathTo(enemy, cell)))
+                return true;
         }
         return false;
     }

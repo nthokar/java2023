@@ -1,7 +1,7 @@
 package chess.figures;
 
 import chess.desk.Cell;
-import chess.game.MoveChecker;
+import chess.desk.MoveChecker;
 import chess.desk.MoveTemplate;
 
 import java.awt.*;
@@ -44,5 +44,20 @@ public class Bishop extends Figure{
             throw new IllegalArgumentException("IllegalMove");
         }
         cells[0].moveFigure(cells[cells.length - 1]);
+    }
+
+    @Override
+    public boolean canMove(Cell[] cells) {
+        if (cells.length == 0)
+            return false;
+        for (var i = 1; i < cells.length - 1; i++){
+            var cell = cells[i];
+            if (cell.getFigure() != null)
+                return false;
+        }
+        if (cells[cells.length - 1].getFigure() != null && cells[cells.length - 1].getFigure().color == color){
+            return false;
+        }
+        return true;
     }
 }

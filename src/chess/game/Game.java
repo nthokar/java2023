@@ -51,8 +51,8 @@ public class Game {
             System.out.println("failed while reading move o_O");
         }
     }
-    public static Game newGame(IPlayer p1, IPlayer p2){
-        return new Game(p1, p2);
+    public static Game newGame(IPlayer p1, IPlayer p2, Desk desk){
+        return new Game(p1, p2, desk);
     }
     public void startGame(){
         desk.print();
@@ -70,9 +70,9 @@ public class Game {
             }
         }
     }
-    private Game(IPlayer p1, IPlayer p2){
+    private Game(IPlayer p1, IPlayer p2, Desk desk){
         this.p1 = p1;
         this.p2 = p2;
-        desk = (new Desk.Builder()).setDefault().build();
+        this.desk = desk;
     }
 }

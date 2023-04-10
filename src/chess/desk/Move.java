@@ -11,6 +11,9 @@ public class Move {
         this.to = to;
         whichMove = color;
     }
+    public Move reverse(){
+        return new Move(to, from, whichMove);
+    }
     @Override
     public String toString() {
         return String.format("%s -> %s", from, to);
