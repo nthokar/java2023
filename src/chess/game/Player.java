@@ -6,11 +6,8 @@ import chess.parser.ConsoleMoveReader;
 import java.awt.*;
 import java.io.InputStream;
 
-public class Player implements IPlayer {
-    InputStream inputStream;
-    ConsoleMoveReader reader;
-    Color color;
-
+public class Player extends APlayer {
+    private final ConsoleMoveReader reader;
     public Move getMove(){
             return reader.readMove();
     }
@@ -18,8 +15,7 @@ public class Player implements IPlayer {
         return new Player(System.in, color);
     }
     protected Player(InputStream inputStream, Color color){
-        this.inputStream = inputStream;
-        this.color = color;
+        super(color);
         reader = new ConsoleMoveReader(inputStream, color);
     }
 }

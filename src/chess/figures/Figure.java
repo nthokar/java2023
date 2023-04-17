@@ -11,24 +11,42 @@ public abstract class Figure {
     public final String name;
     public final Color color;
     public final int material;
-    public Figure(String name, Color color){
+
+
+    Figure(String name, Color color){
         this.name = name;
         this.color = color;
         this.material = getMaterial();
     }
+
+
     public abstract Set<MoveTemplate> getCells();
+
+
     public abstract Set<MoveTemplate> getDirections();
+
+
     public boolean isMoved() {
         return isMoved;
     }
+
+
     public abstract void move(Cell[] cells);
+
+
     public abstract boolean canMove(Cell[] cells);
+
+
     @Override
     public String toString() {
         return color == Color.BLACK ?
                 String.valueOf(name.charAt(0)).toUpperCase() : String.valueOf(name.charAt(0)).toLowerCase();
     }
+
+
     public abstract Figure copy();
+
+
     private int getMaterial(){
         switch (name){
             case "pawn":

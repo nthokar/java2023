@@ -39,9 +39,9 @@ public class Pawn extends Figure {
 
     @Override
     public Figure copy() {
-        var c = new Pawn(this.color);
-        c.isMoved = this.isMoved;
-        return c;
+        var pawn = new Pawn(this.color);
+        pawn.isMoved = this.isMoved;
+        return pawn;
     }
 
     public Set<MoveTemplate> getCells() {
@@ -50,45 +50,12 @@ public class Pawn extends Figure {
     public Set<MoveTemplate> getDirections() {
         return Directions;
     }
-//    private boolean isMoved = false;
-//    public boolean isMoved() {
-//        return isMoved;
-//    }
     @Override
     public void move(Cell[] cells) {
-        if (cells.length == 0 || cells.length > 3)
-            throw new IllegalArgumentException("IllegalMove");
-        if (cells[0].x != cells[1].x){
-            if (cells[cells.length - 1].getFigure() == null)
-                throw new IllegalArgumentException("IllegalMove");
-            else {
-                cells[0].moveFigure(cells[cells.length - 1]);
-                isMoved = true;
-                return;
-            }
-        }
-        if (cells.length == 3){
-            if (isMoved) {
-                throw new IllegalArgumentException("IllegalMove");
-            }
-            for (var i = 1; i < cells.length; i++){
-                var cell = cells[i];
-                if (cell.getFigure() != null) {
-                    throw new IllegalArgumentException("IllegalMove");
-                }
-            }
-            if (Objects.nonNull(cells[cells.length - 1].getFigure())) {
-                throw new IllegalArgumentException("IllegalMove");
-            }
+        if (canMove(cells)){
             cells[0].moveFigure(cells[cells.length - 1]);
             isMoved = true;
-            return;
         }
-        if (Objects.nonNull(cells[cells.length - 1].getFigure())) {
-            throw new IllegalArgumentException("IllegalMove");
-        }
-        cells[0].moveFigure(cells[cells.length - 1]);
-        isMoved = true;
     }
 
     @Override

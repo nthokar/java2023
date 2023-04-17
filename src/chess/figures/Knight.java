@@ -44,14 +44,14 @@ public class Knight extends Figure{
 
     @Override
     public void move(Cell[] cells) {
-        if (cells.length == 0)
-            throw new IllegalArgumentException("IllegalMove");
-        cells[0].moveFigure(cells[1]);
+        if (canMove(cells)) {
+            cells[0].moveFigure(cells[1]);
+        }
     }
 
     @Override
     public boolean canMove(Cell[] cells) {
-        if (cells.length == 0)
+        if (cells.length != 2)
             return false;
         return true;
     }

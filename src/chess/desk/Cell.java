@@ -1,22 +1,13 @@
 package chess.desk;
 
 import chess.figures.Figure;
+import lombok.Getter;
+import lombok.Setter;
 
-
-/*
-Класс клетки поля, отвечает за хранение данных клетки(ее местоположение на пооле, и фигура которая на ней стоит)
-
- */
 public class Cell {
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public void setFigure(Figure figure) {
-        this.figure = figure;
-    }
+    @Getter
+    @Setter
     private Figure figure;
-
     public final int x;
     public final int y;
     public Cell(int x, int y){
@@ -56,5 +47,9 @@ public class Cell {
             return this.x == cell.x && this.y == cell.y;
         }
         return false;
+    }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

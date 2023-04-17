@@ -3,10 +3,9 @@ package chess.desk;
 import chess.figures.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /*
 класс для хранения данных осостоянии дооски и их преобразования.
@@ -51,24 +50,6 @@ public class Desk {
             cells[7][0].setFigure(new Rook(Color.WHITE));
             return this;
         }
-        public Builder setCastle(){
-            int i = 1;
-            for (int j = 0; j < 8; j++){
-                cells[j][i].setFigure(new Pawn(Color.WHITE));
-            }
-            i = 6;
-            for (int j = 0; j < 8; j++){
-                cells[j][i].setFigure(new Pawn(Color.BLACK));
-            }
-            cells[0][7].setFigure(new Rook(Color.BLACK));
-            cells[7][7].setFigure(new Rook(Color.BLACK));
-            cells[4][7].setFigure(new King(Color.BLACK));
-
-            cells[0][0].setFigure(new Rook(Color.WHITE));
-            cells[7][0].setFigure(new Rook(Color.WHITE));
-            cells[4][0].setFigure(new King(Color.WHITE));
-            return this;
-        }
         public Builder setFigure(Figure figure, Cell cell){
             cell = cells[cell.x - 1][cell.y - 1];
             cell.setFigure(figure);
@@ -78,28 +59,12 @@ public class Desk {
             return new Desk(cells);
         }
     }
+    //  длина доски
+    private final Cell[][] cells;
     private int yLength = -1;
-    //длина доски
-    public final Cell[][] cells;
-    public final MoveChecker moveChecker;
-    public Stack<Move> history = new Stack<>();
-    public Cell getKingCell(Color color){
-        if (color == Color.WHITE){
-            var whites = getWhites();
-            for (var cell:whites){
-                if (cell.getFigure() instanceof King)
-                    return cell;
-            }
-        }
-        else if(color == Color.BLACK){
-            var blacks = getBlacks();
-            for (var cell:blacks){
-                if (cell.getFigure() instanceof King)
-                    return cell;
-            }
-        }
-        throw new RuntimeException("there is no king");
-    }
+
+
+    //  вычисляет длину по Y
     public int yLength(){
         if (yLength != -1)
             return yLength;
@@ -110,106 +75,101 @@ public class Desk {
         yLength = max;
         return max;
     }
+
+
+    //  вычисляет длину по X
     public int xLength(){
         return cells.length;
     }
-    //клетки с белыми фигурами
-    public Cell[] getWhites(){
-        ArrayList<Cell> whites = new ArrayList<>();
+
+
+
+    //  возвращает клетку короля указанного цвета
+    public Cell getKingCell(Color color) {
+        var figures = getFiguresByColor(color);
+        for (var cell : figures) {
+            if (cell.getFigure() instanceof King)
+                return cell;
+        }
+        throw new RuntimeException("there is no king");
+    }
+
+
+    //  возвращает все фигуры на доске указанного цвета
+    public List<Cell> getFiguresByColor(Color color){
+        ArrayList<Cell> figures = new ArrayList<>();
         for (var i:cells){
             for (var cell:i){
-                if (cell.getFigure() != null && cell.getFigure().color == Color.WHITE)
-                    whites.add(cell);
+                if (cell.getFigure() != null)
+                    figures.add(cell);
             }
         }
-        return whites.toArray(new Cell[0]);
-    }
-    //клеки с чрными фигурами
-    public Cell[] getBlacks(){
-        ArrayList<Cell> blacks = new ArrayList<>();
-        for (var i:cells){
-            for (var cell:i){
-                if (cell.getFigure() != null && cell.getFigure().color == Color.BLACK)
-                    blacks.add(cell);
-            }
+        if (Objects.isNull(color)){
+            return figures;
         }
-        return blacks.toArray(new Cell[0]);
+        return figures.stream()
+                .filter(cell -> cell.getFigure().color == color)
+                .collect(Collectors.toList());
     }
-    private Desk(Cell[][] cells){
-        this.cells = cells;
-        this.moveChecker = new MoveChecker(this);
-    }
-    //метод возвращает ответ на вопрос возможен ли ход, и если да, то совершает его
-    public boolean tryMove(Move move){
-        try {
-            move = projectMove(move);
-            if (move.from.getFigure() == null){
-                return false;
-            }
 
-//            var deskValidation = this.copy();
-//            deskValidation.moveFigure(move);
-//
-//            if (deskValidation.moveChecker.isUnderAttack(deskValidation.getKingCell(move.whichMove))){
-//                return false;
-//            }
 
-            moveFigure(move);
-            if (isKingUnderAttack(move.whichMove))
-            {
-                undoMove();
-                return false;
-            }
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
+    //  возвращает все фигуры отличного цвета
+    public List<Cell> getEnemiesFigures(Color color){
+        return getFiguresByColor(null).stream()
+                .filter(cell -> cell.getFigure().color != color)
+                .collect(Collectors.toList());
     }
-    private void moveFigureForce(Move move){
+
+
+    //  передвигает фигуру из начальной в конечную клетку
+    public void moveFigureForce(Move move){
         move = projectMove(move);
         move.from.moveFigure(move.to);
-        history.push(move);
     }
-    private void moveFigure(Move move){
-        move = projectMove(move);
-        if (move.from.getFigure() == null){
-            throw new RuntimeException();
-        }
-        var path = moveChecker.pathTo(move.from, move.to);
-        move.from.getFigure().move(path);
-        history.push(move);
-    }
-    public void undoMove(){
-        var move = history.pop();
-        moveFigure(move.reverse());
-    }
-    public void loadByHistory(ArrayList<Move> moves){
-        for (var move:moves) {
-            tryMove(move);
-        }
-    }
+
+
+    //  проецирует ход на доску(возвращает ход основанный на клетках текущей доски,
+    //  по кординатам поступивших клеток)
     public Move projectMove(Move move){
-        var cellFrom = this.cells[move.from.x - 1][move.from .y - 1];
-        var cellTo =    this.cells[move.to.x - 1][move.to.y - 1];
+        if (Objects.isNull(move))
+            throw new RuntimeException();
+        var cellFrom = projectCell(move.from);
+        var cellTo = projectCell(move.to);
         return new Move(cellFrom, cellTo, move.whichMove);
-//        return new Move(
-//                this.cells[move.from.x - 1][move.from .y - 1],
-//                this.cells[move.to.x - 1][move.to.y - 1],
-//                move.whichMove);
     }
-    private boolean isKingUnderAttack(Color color){
-        return moveChecker.isUnderAttack(getKingCell(color));
+
+
+    //  возвращает клетку по ее кординатам
+    public Cell getCell(int x, int y){
+        if ((x - 1 < 0 || xLength() < x ) || (y - 1 < 0 || yLength() < y ))
+            throw new IllegalArgumentException("not valid cell");
+        return cells[x - 1][y - 1];
     }
+
+
+    //  проецирует клетку(возвращает клетку доски выбранную по кординатам поступивщей клетки)
+    public Cell projectCell(Cell cell){
+        if (Objects.isNull(cell) ||
+                (cell.x - 1 < 0 || cell.x > xLength() ) ||
+                (cell.y - 1 < 0 || cell.y > xLength() ))
+            throw new IllegalArgumentException("not valid cell");
+        return getCell(cell.x, cell.y);
+    }
+
+
+    //  оценка материала на доске(сравнение силы суммарной ценности всех фигур)
     public int evaluateMaterial(){
-        var whitesMaterial = Arrays.stream(getWhites())
+        var whitesMaterial = getFiguresByColor(Color.WHITE).stream()
                 .map(x -> x.getFigure().material)
                 .reduce(0, Integer::sum);
-        var blacksMaterial = Arrays.stream(getBlacks())
+        var blacksMaterial = getFiguresByColor(Color.BLACK).stream()
                 .map(x -> x.getFigure().material)
                 .reduce(0, Integer::sum);
         return whitesMaterial - blacksMaterial;
     }
+
+
+    //  полное копирование доски
     public Desk copy(){
         Cell[][] _cells = new Cell[xLength()][yLength()];
         for (var i = 0; i < xLength(); i++){
@@ -219,6 +179,8 @@ public class Desk {
         }
         return new Desk(_cells);
     }
+
+    //  вывод положения фигур на доске
     public void print(){
         for (int i = 7; i >= 0; i--){
             System.out.println("+-----+-----+-----+-----+-----+-----+-----+-----+");
@@ -232,7 +194,10 @@ public class Desk {
         System.out.println("   a     b     c     d     e     f     g     h");
 
     }
-    public void castle(Castle castle){
+
+
+    //FIXME
+    private void castle(Castle castle){
         var kingCell = getKingCell(castle.whichMove);
         Cell rookCell = cells
             [castle.to.equals(new Cell(3, 0)) ? 0 : 7]
@@ -248,5 +213,8 @@ public class Desk {
         rookCell.moveFigure(cells
                 [castle.to.equals(new Cell(3, 0)) ? castle.to.x : castle.to.x - 2 ]
                 [castle.whichMove.equals(Color.WHITE)   ? 0 : 7]);
+    }
+    private Desk(Cell[][] cells){
+        this.cells = cells;
     }
 }

@@ -1,35 +1,46 @@
 package chess.desk;
 
-import java.awt.*;
-import java.util.List;
+import chess.game.Game;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class MoveChecker {
-    public MoveChecker(Desk desk){
-        this.desk = desk;
-        this.board = desk.cells;
-    }
+    public final Game game;
     public final Desk desk;
-    public final Cell[][] board;
-    public Cell[] CellsInDirection(Cell cell, MoveTemplate moveTemplate){
-        int x = Math.round((float) (cell.x + moveTemplate.x)) - 1;
-        int y = Math.round((float) (cell.y +  moveTemplate.y)) - 1;
-        if (x < desk.xLength() && 0 <= x && y < desk.yLength() && 0 <= y){
-            Cell newCell = desk.cells[x][y];
-            if (newCell.getFigure() == null){
-                var raisedArray = new ArrayList<Cell>(){{add(newCell);}};
-                raisedArray.addAll(List.of(CellsInDirection(newCell, moveTemplate)));
-                return raisedArray.toArray(new Cell[raisedArray.size()]);
-            }
-            else
-                return new Cell[]{newCell};
-        }
-        return new Cell[0];
+    public MoveChecker(Game game, Desk desk){
+        this.desk = desk;
+        this.game = game;
     }
+
+
+    public List<Cell> cellsInDirection(Cell cell, MoveTemplate moveTemplate){
+        int x = Math.round((float) (cell.x + moveTemplate.x));
+        int y = Math.round((float) (cell.y +  moveTemplate.y));
+        if (x < desk.xLength() && 0 <= x && y < desk.yLength() && 0 <= y){
+            try {
+                Cell newCell = desk.getCell(x, y);
+                if (newCell.getFigure() == null) {
+                    var raisedList = new ArrayList<Cell>();
+                    raisedList.add(newCell);
+                    raisedList.addAll(cellsInDirection(newCell, moveTemplate));
+                    return raisedList;
+                }
+                else {
+                    return new ArrayList<Cell>(){{add(newCell);}};
+                }
+            }
+            catch (Exception e) {
+                //pass
+            }
+        }
+        return Collections.emptyList();
+    }
+
+
     public Cell[] pathTo(Cell cellFrom, Cell cellTo) {
-        cellFrom = board[cellFrom.x - 1][cellFrom.y - 1];
-        cellTo = board[cellTo.x - 1][cellTo.y -1];
+        cellFrom = desk.projectCell(cellFrom);
+        cellTo = desk.projectCell(cellTo);
         var vector = cellFrom.getVector(cellTo);
         double maxAbs = Math.max(Math.abs(vector.x), Math.abs(vector.y));
         MoveTemplate unitMoveTemplate =  new MoveTemplate(vector.x/ maxAbs, vector.y/maxAbs);
@@ -46,13 +57,15 @@ public class MoveChecker {
             ArrayList<Cell> path = new ArrayList<>();
             path.add(currentCell);
             while (currentCell != cellTo){
-                currentCell = board[currentCell.x + (int) unitMoveTemplate.x - 1][currentCell.y + (int) unitMoveTemplate.y - 1];
+                currentCell = desk.projectCell(new Cell(currentCell.x + (int) unitMoveTemplate.x, currentCell.y + (int) unitMoveTemplate.y));
                 path.add(currentCell);
             }
             return path.toArray(Cell[]::new);
         }
         return new Cell[0];
     }
+
+
     public Set<Move> possibleMoves(Cell cellFrom){
         HashSet<Move> moves = new HashSet<>();
         var figure = cellFrom.getFigure();
@@ -60,46 +73,66 @@ public class MoveChecker {
             return moves;
         }
         for(var direction: figure.getDirections()){
-            var cellsInDirection = CellsInDirection(cellFrom, direction);
-            moves.addAll(Arrays.stream(cellsInDirection)
+            var cellsInDirection = cellsInDirection(cellFrom, direction);
+            moves.addAll(cellsInDirection.stream()
                     .map(x -> new Move(cellFrom, x, figure.color))
+                    .filter(x -> validateMove(desk.projectMove(x)))
                     .collect(Collectors.toList()));
         }
         for (var cell:figure.getCells()) {
             try {
-                moves.add(new Move(
-                        cellFrom, desk.cells
-                        [cellFrom.x + (int)cell.x - 1]
-                        [cellFrom.y + (int)cell.y - 1], figure.color));
+                var move = new Move(
+                        cellFrom,
+                        desk.getCell(cellFrom.x + (int)cell.x, cellFrom.y + (int)cell.y),
+                        figure.color);
+                if (validateMove(desk.projectMove(move)))
+                    moves.add(move);
             }
             catch (Exception e){
-
             }
         }
         return moves;
     }
+
+
     public boolean isUnderAttack(Cell cell){
-        Cell[] enemies;
-        cell = desk.cells[cell.x - 1][cell.y - 1];
-        if (cell.getFigure() == null){
-            var whites = desk.getWhites();
-            var blacks = desk.getBlacks(); // !
-            enemies = new Cell[blacks.length + whites.length];
-            System.arraycopy(whites, 0, enemies, 0, whites.length);
-            System.arraycopy(blacks, whites.length, enemies, whites.length, whites.length + blacks.length - whites.length);
-        }
-        enemies = cell.getFigure().color == Color.WHITE ? desk.getBlacks() : desk.getWhites();
+        cell = desk.projectCell(cell);
+        var enemies = desk.getEnemiesFigures(cell.getFigure().color);
 
-
-
-        cell = desk.cells[cell.x - 1][cell.y - 1];
         for (var enemy:enemies){
-            enemy = desk.cells[enemy.x - 1][enemy.y - 1];
-            if (enemy.getFigure().canMove(desk.moveChecker.pathTo(enemy, cell)))
+            enemy = desk.projectCell(enemy);
+            if (enemy.getFigure().canMove(pathTo(enemy, cell)))
                 return true;
         }
         return false;
     }
+
+
+    public boolean validateMove(Move move){
+        if (Objects.isNull(move)){
+            return false;
+        }
+        try {
+            move = desk.projectMove(move);
+            if (move.from.getFigure() == null || (move.to.getFigure() != null &&
+                    move.from.getFigure().color.equals(move.to.getFigure().color))){
+                return false;
+            }
+            var path = pathTo(move.from, move.to);
+            if (!move.from.getFigure().canMove(path))
+                return false;
+            desk.moveFigureForce(move);
+            var result = !(isUnderAttack(desk.getKingCell(move.whichMove)));
+            desk.moveFigureForce(move.reverse());
+            move.reverse();
+            return result;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+
+
     public static final HashMap<String, MoveTemplate> Directions = new HashMap<String, MoveTemplate>(){{
         put("upperLeftDiagonal", new MoveTemplate(-1,+1));
         put("upperRightDiagonal", new MoveTemplate(+1,+1));
@@ -110,6 +143,8 @@ public class MoveChecker {
         put("upperVertical", new MoveTemplate(0,+1));
         put("downVertical", new MoveTemplate(0,-1));
     }};
+
+
     public static final HashMap<String, MoveTemplate> Cells = new HashMap<String, MoveTemplate>(){{
         put("upperLeftCell", new MoveTemplate(-1,+1));
         put("upperRightCell", new MoveTemplate(+1,+1));

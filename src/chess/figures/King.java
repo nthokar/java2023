@@ -49,28 +49,7 @@ public class King extends Figure{
     }
     @Override
     public void move(Cell[] cells) {
-        if (cells.length == 0) {
-            throw new IllegalArgumentException("IllegalMove");
-        }
-        if (cells.length >= 3){
-            //рокировка
-            if (isMoved){
-                throw new IllegalArgumentException("IllegalMove");
-            }
-            var rookCell = cells[cells.length - 1];
-
-            if (rookCell.getFigure() instanceof Rook &&
-                    !(((Rook) rookCell.getFigure()).isMoved())){
-                rookCell.moveFigure(cells[1]);
-                cells[0].moveFigure(cells[2]);
-                return;
-            }
-            throw new IllegalArgumentException("IllegalMove");
-        }
-        else{
-            if (cells[1].getFigure().color == color) {
-                throw new IllegalArgumentException("IllegalMove");
-            }
+        if (canMove(cells)){
             cells[0].moveFigure(cells[1]);
             isMoved = false;
         }
@@ -94,7 +73,7 @@ public class King extends Figure{
             }
         }
         else{
-            if (cells[1].getFigure().color == color) {
+            if (cells[1].getFigure() != null && cells[1].getFigure().color == color) {
                 return false;
             }
             return true;

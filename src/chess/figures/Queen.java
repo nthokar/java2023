@@ -40,18 +40,9 @@ public class Queen extends Figure{
     }
     @Override
     public void move(Cell[] cells) {
-        if (cells.length == 0)
-            throw new IllegalArgumentException("IllegalMove");
-        for (var i = 1; i < cells.length - 1; i++){
-            var cell = cells[i];
-            if (cell.getFigure() != null)
-                throw new IllegalArgumentException("IllegalMove");
-
+        if (canMove(cells)){
+            cells[0].moveFigure(cells[cells.length - 1]);
         }
-        if (cells[cells.length - 1].getFigure() != null && cells[cells.length - 1].getFigure().color == color){
-            throw new IllegalArgumentException("IllegalMove");
-        }
-        cells[0].moveFigure(cells[cells.length - 1]);
     }
 
     @Override
