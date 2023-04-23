@@ -1,6 +1,7 @@
 package chess.bot;
 
 import chess.desk.Move;
+import chess.figures.King;
 import chess.game.APlayer;
 import chess.game.Game;
 import lombok.Setter;
@@ -58,19 +59,39 @@ public class Bot extends APlayer {
                     evaluateGame.turn(move);
                     evaluateGame.undo();
                 }
-                catch (Exception ignored) {
-                    //pass
+                catch (Exception e){
+                     //evaluateGame.undo();
+                     continue;
                 }
                 if (deep <= 0) {
+                    evaluateGame.turn(move);
                     evaluate.put(moveCopy, evaluate());
+                    evaluateGame.undo();
+
                 }
                 else {
-                    evaluate.put(moveCopy, ((Bot) evaluateGame.getEnemy(this)).complexEvaluate(deep - 1));
+                    evaluateGame.turn(move);
+                    var bot = ((Bot) evaluateGame.getEnemy(this));
+                    evaluate.put(moveCopy, bot.complexEvaluate(deep - 1));
+                    evaluateGame.undo();
+
                 }
             }
         }
         return evaluate;
     }
+
+
+    private void test(){
+        if (evaluateGame.getDesk().getFiguresByColor(getColor())
+                .stream()
+                .filter(x -> x.getFigure() instanceof King)
+                .count() > 1)
+        {
+            throw new RuntimeException();
+        }
+    }
+
 
     public Double evaluate() {
         return (double) evaluateGame.evaluateMaterial();
@@ -89,7 +110,7 @@ public class Bot extends APlayer {
                 deep - 1,
                 evaluateGame.getEnemy(this).getColor());
         this.evaluateGame = new Game(
-                evaluateGame.getDesk().copy(),
+                evaluateGame.getDesk(),
                 (Stack<Move>) evaluateGame.getMoveHistory().clone(),
                 this,
                 newBot);

@@ -14,9 +14,7 @@ public class Pawn extends Figure {
         if (color == Color.BLACK) {
             Cells = Set.of(
                     MoveChecker.Cells.get("downLeftCell"),
-                    MoveChecker.Cells.get("downRightCell"),
-                    MoveChecker.Cells.get("downCell")
-                    //MoveChecker.Cells.get("downDownCell")
+                    MoveChecker.Cells.get("downRightCell")
             );
             Directions = Set.of(
                     MoveChecker.Directions.get("downVertical")
@@ -25,9 +23,7 @@ public class Pawn extends Figure {
         else {
             Cells = Set.of(
                     MoveChecker.Cells.get("upperLeftCell"),
-                    MoveChecker.Cells.get("upperRightCell"),
-                    MoveChecker.Cells.get("upperCell")
-                    //MoveChecker.Cells.get("upperUpperCell")
+                    MoveChecker.Cells.get("upperRightCell")
                     );
             Directions = Set.of(
                     MoveChecker.Directions.get("upperVertical")

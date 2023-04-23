@@ -181,12 +181,14 @@ public class Desk {
     }
 
     //  вывод положения фигур на доске
-    public void print(){
+    public void print2(){
         for (int i = 7; i >= 0; i--){
             System.out.println("+-----+-----+-----+-----+-----+-----+-----+-----+");
             System.out.print("|");
             for (int j = 0; j < 8; j++){
-                System.out.printf("  %s  |",cells[j][i]);
+                System.out.printf(" " + ((i + j) % 2 == 0 ? ConsoleColors.WHITE_BACKGROUND : "")
+                        + " %s " +
+                        ConsoleColors.RESET + " |",cells[j][i]);
             }
             System.out.printf(" %s%n", i+1);
         }
@@ -195,6 +197,34 @@ public class Desk {
 
     }
 
+    public void print(){
+        for (int i = 7; i >= 0; i--){
+            for (int j = 0; j < 8; j++){
+                System.out.print(cells[j][i].prettytoString());
+            }
+            System.out.printf("%s%n", ConsoleColors.RESET + " " + (i+1));
+        }
+        System.out.println(" a  b  c  d  e  f  g  h");
+    }
+    public void print(Move move){
+        for (int i = 7; i >= 0; i--){
+            for (int j = 0; j < 8; j++) {
+                String isHighlighted = "";
+                String isHighlightedBright = "";
+                if (move.from.equals(cells[j][i]))
+                {
+                    isHighlighted = ConsoleColors.YELLOW_BACKGROUND;
+                }
+                if (move.to.equals(cells[j][i]))
+                {
+                    isHighlighted = ConsoleColors.YELLOW_BACKGROUND_BRIGHT;
+                }
+                System.out.print(cells[j][i].prettytoString(isHighlighted));
+            }
+            System.out.printf("%s%n", ConsoleColors.RESET + " " + (i+1));
+        }
+        System.out.println(" a  b  c  d  e  f  g  h");
+    }
 
     //FIXME
     private void castle(Castle castle){

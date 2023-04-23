@@ -4,6 +4,9 @@ import chess.figures.Figure;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
+import java.util.Objects;
+
 public class Cell {
     @Getter
     @Setter
@@ -32,6 +35,20 @@ public class Cell {
         cellTo.figure = figure;
         this.figure = null;
     }
+
+    public String prettytoString() {
+        return ((x + y) % 2 == 0 ? ConsoleColors.WHITE_BACKGROUND : ConsoleColors.RESET) + " " +
+                (Objects.nonNull(figure) && figure.color == Color.WHITE ? ConsoleColors.WHITE_BOLD_BRIGHT : ConsoleColors.BLACK_BOLD ) +
+                (Objects.nonNull(figure) ?  figure : " ") + " ";
+    }
+    public String prettytoString(String colorToHighlight) {
+        return  (Objects.nonNull(colorToHighlight) && !colorToHighlight.equals("") ? colorToHighlight :
+                ((x + y) % 2 == 0 ? ConsoleColors.WHITE_BACKGROUND : ConsoleColors.RESET)) + " " +
+                (Objects.nonNull(figure) && figure.color == Color.WHITE ? ConsoleColors.WHITE_BOLD_BRIGHT : ConsoleColors.BLACK_BOLD ) +
+                (Objects.nonNull(figure) ?  figure : " ") + " ";
+    }
+
+
     @Override
     public String toString() {
         return figure == null ? " " : figure.toString();

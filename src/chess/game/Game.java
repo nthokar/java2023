@@ -49,6 +49,7 @@ public class Game {
         cell.getFigure().move(path);
         moveHistory.push(moveCopy);
         changeTurn();
+        //updateGame();
     }
 
 
@@ -67,17 +68,16 @@ public class Game {
             if (whichTurn == Color.WHITE){
                 try{
                     turn(p1.getMove());
-                    desk.print();
+                    print();
                 }
                 catch (Exception e){
-
                 }
             }
             System.out.println("Black turn");
             if (whichTurn == Color.BLACK){
                 try{
                     turn(p2.getMove());
-                    desk.print();
+                    print();
                 }
                 catch (Exception e){
 
@@ -87,6 +87,11 @@ public class Game {
                 break;
             }
         }
+    }
+
+
+    public void print() {
+        desk.print(moveHistory.peek());
     }
 
 
@@ -115,14 +120,9 @@ public class Game {
 
 
     public Game(Desk desk, Stack<Move> moveHistory, APlayer p1, APlayer p2) {
-        if (p1 instanceof Bot){
-            ((Bot)p1).setEvaluateGame(this);
-        }
-        if (p2 instanceof Bot){
-            ((Bot)p2).setEvaluateGame(this);
-        }
         this.p1= p1;
         this.p2 = p2;
+        updateGame();
         this.desk = desk;
         this.moveChecker = new MoveChecker(this, desk);
         if (Objects.nonNull(moveHistory) && !moveHistory.isEmpty()){
@@ -132,6 +132,16 @@ public class Game {
         }
         else {
             whichTurn = p1.getColor();
+        }
+    }
+
+
+    private void updateGame() {
+        if (p1 instanceof Bot){
+            ((Bot)p1).setEvaluateGame(this);
+        }
+        if (p2 instanceof Bot){
+            ((Bot)p2).setEvaluateGame(this);
         }
     }
 }

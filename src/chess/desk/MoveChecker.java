@@ -17,7 +17,7 @@ public class MoveChecker {
     public List<Cell> cellsInDirection(Cell cell, MoveTemplate moveTemplate){
         int x = Math.round((float) (cell.x + moveTemplate.x));
         int y = Math.round((float) (cell.y +  moveTemplate.y));
-        if (x < desk.xLength() && 0 <= x && y < desk.yLength() && 0 <= y){
+        if (x <= desk.xLength() && 0 < x && y <= desk.yLength() && 0 < y){
             try {
                 Cell newCell = desk.getCell(x, y);
                 if (newCell.getFigure() == null) {
@@ -121,10 +121,11 @@ public class MoveChecker {
             var path = pathTo(move.from, move.to);
             if (!move.from.getFigure().canMove(path))
                 return false;
+            var moveCopy = move.copy();
             desk.moveFigureForce(move);
             var result = !(isUnderAttack(desk.getKingCell(move.whichMove)));
-            desk.moveFigureForce(move.reverse());
-            move.reverse();
+            desk.getCell(moveCopy.from.x, moveCopy.from.y).setFigure(moveCopy.from.getFigure());
+            desk.getCell(moveCopy.to.x, moveCopy.to.y).setFigure(moveCopy.to.getFigure());
             return result;
         }
         catch (Exception e){
