@@ -70,7 +70,7 @@ class BotTest {
         game = new Game(desk, null, new Bot(3, game, Color.WHITE), Player.consolePlayer(Color.BLACK));
         desk.print();
         //game.turn(new Move(new Cell(1, 6), new Cell(1, 4), Color.WHITE));
-        game.startGame();
+        game.run();
         desk.print();
     }
 }

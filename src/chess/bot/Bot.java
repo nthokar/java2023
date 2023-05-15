@@ -11,9 +11,9 @@ import java.util.*;
 
 public class Bot extends APlayer {
     @Setter
-    private Game evaluateGame;
-    private boolean isInitialized;
-    private final int deep;
+    protected Game evaluateGame;
+    protected boolean isInitialized;
+    protected final int deep;
 
 
 
@@ -97,13 +97,11 @@ public class Bot extends APlayer {
         return (double) evaluateGame.evaluateMaterial();
     }
 
-
-
-    private Bot(int deep, Color color){
+    protected Bot(int deep, Color color){
         super(color);
         this.deep = deep;
     }
-    private void initEvaluateGame(){
+    protected void initEvaluateGame(){
         if (isInitialized)
             return;
         var newBot = new Bot(

@@ -1,6 +1,8 @@
 package chess.game;
 
+import application.User;
 import chess.bot.Bot;
+import chess.bot.FastBot;
 import chess.desk.Cell;
 import chess.desk.Desk;
 import chess.desk.Move;
@@ -13,7 +15,90 @@ import java.util.Objects;
 import java.util.Stack;
 
 //главный класс партии. Отвечает за инициализацию пвртии, и ее проведение.
-public class Game {
+public class Game implements Runnable {
+
+    public static class Builder {
+        @Getter
+        APlayer p1;
+        @Getter
+        APlayer p2;
+        @Getter
+        Desk desk;
+        @Getter
+        MoveChecker moveChecker;
+        @Getter
+        Color whichTurn = Color.WHITE;
+        @Getter
+        Stack<Move> moveHistory = new Stack<>();
+
+        @Getter
+        User whiteUser;
+        @Getter
+        User blackUser;
+
+        public Builder p1(APlayer player){
+            p1 = player;
+            return this;
+        }
+        public Builder p2(APlayer player){
+            p2 = player;
+            return this;
+        }
+
+        public Builder whiteUser(User user){
+            whiteUser = user;
+            return this;
+        }
+
+        public Builder blackUser(User user){
+            blackUser = user;
+            return this;
+        }
+
+        public Builder setPlayerWithBot(APlayer player){
+            p1(player).p2(new Bot(3, null, player.getColor() == Color.BLACK ? Color.WHITE : Color.BLACK));
+            return this;
+        }
+
+        public Builder swapPLayersColors(){
+            var blackUser = getBlackUser();
+            blackUser(getWhiteUser()).whiteUser(blackUser);
+            return this;
+        }
+
+        public Builder desk(Desk desk){
+            this.desk = desk;
+            return this;
+        }
+        public Builder setDeskDefault(){
+            desk = new Desk.Builder().setDefault().build();
+            return this;
+        }
+
+        public Builder moveChecker(MoveChecker moveChecker){
+            this.moveChecker = moveChecker;
+            return this;
+        }
+        public Builder whichTurn(Color whichTurn){
+            this.whichTurn = whichTurn;
+            return this;
+        }
+        public Builder moveHistory(Stack<Move> moveHistory){
+            this.moveHistory = moveHistory;
+            return this;
+        }
+        public Builder moveHistoryAdd(Move move){
+            this.moveHistory.add(move);
+            return this;
+        }
+        public Game build(){
+            return new Game(this);
+        }
+        public void buildAndRun(){
+            new Game(this).run();
+        }
+    }
+
     @Getter
     APlayer p1;
     @Getter
@@ -61,7 +146,7 @@ public class Game {
     }
 
 
-    public void startGame(){
+    public void run(){
         desk.print();
         for(;;){
             System.out.println("White turn");
@@ -75,6 +160,7 @@ public class Game {
             }
             System.out.println("Black turn");
             if (whichTurn == Color.BLACK){
+                System.out.println(System.nanoTime());
                 try{
                     turn(p2.getMove());
                     print();
@@ -82,6 +168,7 @@ public class Game {
                 catch (Exception e){
 
                 }
+                System.out.println(System.nanoTime());
             }
             if (whichTurn == null){
                 break;
@@ -120,6 +207,8 @@ public class Game {
 
 
     public Game(Desk desk, Stack<Move> moveHistory, APlayer p1, APlayer p2) {
+        if (p1.getColor() == p2.getColor())
+            throw new RuntimeException("players have same color");
         this.p1= p1;
         this.p2 = p2;
         updateGame();
@@ -143,5 +232,26 @@ public class Game {
         if (p2 instanceof Bot){
             ((Bot)p2).setEvaluateGame(this);
         }
+    }
+    private Game(Builder builder) {
+        if (Objects.nonNull(builder.whiteUser)){
+            p1 = new Player(builder.whiteUser.getInputStream(), Color.WHITE);
+        }
+        else {
+            p1 = new FastBot(4,Color.WHITE);
+        }
+        if (Objects.nonNull(builder.blackUser)){
+            p2 = new Player(builder.blackUser.getInputStream(), Color.BLACK);
+        }
+        else {
+            p2 = new FastBot(4,Color.BLACK);
+        }
+
+        updateGame();
+
+        this.desk = builder.getDesk();
+        this.moveHistory = builder.moveHistory;
+        this.whichTurn = builder.whichTurn;
+        this.moveChecker = new MoveChecker(this, desk);
     }
 }

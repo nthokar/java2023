@@ -11,10 +11,10 @@ public class Player extends APlayer {
     public Move getMove(){
             return reader.readMove();
     }
-    public  static Player consolePlayer(Color color){
+    public static Player consolePlayer(Color color){
         return new Player(System.in, color);
     }
-    protected Player(InputStream inputStream, Color color){
+    public Player(InputStream inputStream, Color color){
         super(color);
         reader = new ConsoleMoveReader(inputStream, color);
     }
